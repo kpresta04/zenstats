@@ -10,7 +10,7 @@
 # Create a stage for building the application.
 ARG GO_VERSION=1.23.2
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
-LABEL org.opencontainers.image.source=https://github.com/dreamsofcode-io/zenstats
+LABEL org.opencontainers.image.source=https://github.com/kpresta04/zenstats
 WORKDIR /src
 
 RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
@@ -33,10 +33,6 @@ ARG TARGETARCH
 
 COPY . /src
 
-# Build the application.
-# Leverage a cache mount to /go/pkg/mod/ to speed up subsequent builds.
-# Leverage a bind mount to the current directory to avoid having to copy the
-# source code into the container.
 RUN go generate
 
 # Build the application.
@@ -59,16 +55,16 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 # (e.g., alpine:3.17.2) or SHA (e.g., alpine@sha256:c41ab5c992deb4fe7e5da09f67a8804a46bd0592bfdf0b1847dde0e0889d2bff).
 FROM alpine:latest AS final
 
-LABEL org.opencontainers.image.source=https://github.com/dreamsofcode-io/zenstats
+LABEL org.opencontainers.image.source=https://github.com/kpresta04/zenstats
 # Install any runtime dependencies that are needed to run your application.
 # Leverage a cache mount to /var/cache/apk/ to speed up subsequent builds.
 RUN --mount=type=cache,target=/var/cache/apk \
     apk --update add \
-        ca-certificates \
-        tzdata \
-        curl \
-        && \
-        update-ca-certificates
+    ca-certificates \
+    tzdata \
+    curl \
+    && \
+    update-ca-certificates
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
