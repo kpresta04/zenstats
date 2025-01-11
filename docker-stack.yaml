@@ -6,7 +6,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=elliott@zenful.site"
+      # - "--certificatesresolvers.myresolver.acme.email="
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
@@ -25,11 +25,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   web:
-    image: ghcr.io/dreamsofcode-io/zenstats:${GIT_COMMIT_HASH:-latest}
+    image: ghcr.io/kpresta04/zenstats:${GIT_COMMIT_HASH:-latest}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.web.loadbalancer.server.port=8080"
-      - "traefik.http.routers.web.rule=Host(`zenful.site`)"
+      - "traefik.http.routers.web.rule=Host(`greenlight.kellenpresta.dev`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
     secrets:
@@ -58,7 +58,7 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
